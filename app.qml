@@ -24,6 +24,6 @@ QbApp{
         Material.foreground: appTheme.foreground
         Material.accent: appTheme.accent
         Material.primary: appTheme.primary
-        Material.theme: Material.theme === "dark"?Material.Dark:Material.Light
+        Material.theme: appTheme.theme === "dark"?Material.Dark:Material.Light
     }
 }
