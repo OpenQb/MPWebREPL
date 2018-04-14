@@ -14,6 +14,8 @@ Page{
     property alias ip: objAddress.text
     property bool isConnected: false
     //property string lastCommand:""
+    property var history: []
+    property int historyIndex: 0
     property string receivedBuffer:""
     anchors.leftMargin: QbCoreOne.scale(10)
     anchors.rightMargin: QbCoreOne.scale(10)
@@ -27,11 +29,13 @@ Page{
     function enableMessageSenderBox(){
         objMessageSenderBox.echoMode = TextField.Normal
         objMessageSenderBox.enabled = true;
+        objMessageSenderBox.text ="";
         //objMessageSenderButton.enabled = true;
         objMessageSenderBox.forceActiveFocus();
     }
 
     function disableMessageSenderBox(){
+        objMessageSenderBox.text = "";
         objMessageSenderBox.enabled = false;
         //objMessageSenderButton.enabled = false;
     }
@@ -146,6 +150,24 @@ Page{
             width: parent.width
             wrapMode: TextEdit.Wrap
             inputMethodHints: Qt.ImhNoPredictiveText
+            Keys.onUpPressed: {
+                //console.log("Up")
+                if(objWebREPLPage.history.length==0) return;
+                objMessageSenderBox.text = objWebREPLPage.history[objWebREPLPage.historyIndex];
+                if(objWebREPLPage.historyIndex>0){
+                    objWebREPLPage.historyIndex = objWebREPLPage.historyIndex - 1;
+                }
+            }
+            Keys.onDownPressed: {
+                //console.log("Down")
+                if(objWebREPLPage.history.length==0) return;
+                //console.log(objWebREPLPage.historyIndex);
+                if(objWebREPLPage.historyIndex<objWebREPLPage.history.length-1){
+                    objWebREPLPage.historyIndex = objWebREPLPage.historyIndex + 1;
+                }
+                objMessageSenderBox.text = objWebREPLPage.history[objWebREPLPage.historyIndex];
+            }
+
             Keys.onReturnPressed: {
                 var text = objMessageSenderBox.text;
                 if(objWebREPLPage.isConnected){
@@ -153,6 +175,17 @@ Page{
                         objTerminal.clear();
                     }
                     else{
+                        if(objWebREPLPage.history.length === 0){
+                            objWebREPLPage.history.push(text);
+                            objWebREPLPage.historyIndex = objWebREPLPage.history.length-1;
+                        }
+                        else{
+                            var lastOne = objWebREPLPage.history[objWebREPLPage.history.length-1];
+                            if(lastOne !== text){
+                                objWebREPLPage.history.push(text);
+                                objWebREPLPage.historyIndex = objWebREPLPage.history.length-1;
+                            }
+                        }
                         objWebSocket.sendTextMessage(text+"\r");
                         disableMessageSenderBox();
                     }
