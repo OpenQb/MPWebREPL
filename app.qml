@@ -7,11 +7,12 @@ import QtQuick.Controls.Material 2.3
 
 QbApp{
     id: appUi
-    Keys.forwardTo: []
+    Keys.forwardTo: [objWebREPL]
 
     QbSettings {
         id: appSettings
         name: "MPWebREPL"
+        property alias ip: objWebREPL.ip
     }
 
     QbMetaTheme{
@@ -25,5 +26,10 @@ QbApp{
         Material.accent: appTheme.accent
         Material.primary: appTheme.primary
         Material.theme: appTheme.theme === "dark"?Material.Dark:Material.Light
+        anchors.fill: parent
+        WebREPL{
+            id: objWebREPL
+            anchors.fill: parent
+        }
     }
 }
