@@ -12,7 +12,7 @@
 	"subCategory"      : "Tools",
 	"genre"   		   : "Tools",
 
-    "minQbVersion"     : "1",
+    "minQbVersion"     : "1.0.1",
     "appVariant"       : "APP",
 	"packageVariant"   : "QAP",    
 

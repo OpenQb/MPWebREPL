@@ -14,9 +14,16 @@ QbApp{
         name: "MPWebREPL"
     }
 
-    Page{
-        id: appPage
+    QbMetaTheme{
+        id: appTheme
+    }
 
-        
+    Page{
+        id: appMainPage
+        Material.background: appTheme.background
+        Material.foreground: appTheme.foreground
+        Material.accent: appTheme.accent
+        Material.primary: appTheme.primary
+        Material.theme: Material.theme === "dark"?Material.Dark:Material.Light
     }
 }
