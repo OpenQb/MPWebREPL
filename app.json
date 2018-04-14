@@ -1,0 +1,26 @@
+{
+    "name"			   : "MPWebREPL",
+    "version"		   : "1.0.0",
+    "build"            : 1,
+    "namespace"		   : "com.github.openqb.MPWebREPL",
+	
+	"supportedOs"      : ["android","ios","osx","linux","windows"],
+
+	"tags"             : "MicroPython, WebREPL",
+
+	"category"         : "Applications",
+	"subCategory"      : "Tools",
+	"genre"   		   : "Tools",
+
+    "minQbVersion"     : "1",
+    "appVariant"       : "APP",
+	"packageVariant"   : "QAP",    
+
+    "description"      : "WebREPL for MicroPython ESP8266/ESP32 board",
+
+	"author"		   : [
+			{"name" : "Kawser" , "link" : "https://github.com/mkawserm" }
+	],
+	
+	"projectLink"	: [{"name":"GitHub","link":"openqb/MPWebREPL"}]
+}
