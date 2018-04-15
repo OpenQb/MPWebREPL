@@ -13,6 +13,7 @@ Page{
     height: 500
     property alias ip: objAddress.text
     property bool isConnected: false
+    property int mode: 0
     //property string lastCommand:""
     property var history: []
     property int historyIndex: 0
@@ -52,6 +53,10 @@ Page{
 
     WebSocket{
         id: objWebSocket
+
+//        onBinaryMessageReceived: {
+//            console.log("Binary message");
+//        }
         onTextMessageReceived: {
             if(message.indexOf("Password:") === 0){
                 addMessage("Welcome to MicroPython.\n");
@@ -73,18 +78,27 @@ Page{
             }
             else{
                 //console.log(message)
-                if(message.indexOf(">>>") === 0){
-                    addMessage(">>> "+objWebREPLPage.receivedBuffer.slice(0,objWebREPLPage.receivedBuffer.length));
-                    objWebREPLPage.receivedBuffer = "";
-                    enableMessageSenderBox();
-                }
-                else if(message.indexOf("...") == 0){
-                    addMessage(">>> "+objWebREPLPage.receivedBuffer.slice(0,objWebREPLPage.receivedBuffer.length));
-                    objWebREPLPage.receivedBuffer = "";
-                    enableMessageSenderBox();
-                }
-                else{
-                    objWebREPLPage.receivedBuffer = objWebREPLPage.receivedBuffer+message
+                switch (objWebREPLPage.mode){
+                case 0:
+                    if(message.indexOf(">>>") === 0){
+                        addMessage(">>> "+objWebREPLPage.receivedBuffer.slice(0,objWebREPLPage.receivedBuffer.length));
+                        objWebREPLPage.receivedBuffer = "";
+                        enableMessageSenderBox();
+                    }
+                    else if(message.indexOf("...") == 0){
+                        addMessage(">>> "+objWebREPLPage.receivedBuffer.slice(0,objWebREPLPage.receivedBuffer.length));
+                        objWebREPLPage.receivedBuffer = "";
+                        enableMessageSenderBox();
+                    }
+                    else{
+                        objWebREPLPage.receivedBuffer = objWebREPLPage.receivedBuffer+message
+                    }
+                    break;
+                case 21:
+                    console.log(message);
+                    break;
+                default:
+                    break
                 }
             }
         }
@@ -171,10 +185,12 @@ Page{
             Keys.onReturnPressed: {
                 var text = objMessageSenderBox.text;
                 if(objWebREPLPage.isConnected){
+                    //password phase is complete
                     if(text === "clear"){
                         objTerminal.clear();
                     }
                     else{
+                        objWebREPLPage.mode = 0;
                         if(objWebREPLPage.history.length === 0){
                             objWebREPLPage.history.push(text);
                             objWebREPLPage.historyIndex = objWebREPLPage.history.length-1;
