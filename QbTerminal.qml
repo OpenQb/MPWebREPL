@@ -79,7 +79,28 @@ Item{
         //console.log("Terminal:"+objTerminalContents.height);
     }
 
+    Timer{
+        id: objMainTimer
+        running: objQbTerminal.terminalEnabled
+        repeat: true
+        interval: 500
+        triggeredOnStart: true
+        onTriggered: {
+            if(objTerminal.terminalEnabled){
+                objQbTerminal.blink = !objQbTerminal.blink;
+            }
+        }
+    }
+    property bool blink: true
 
+    Component{
+        id: objCursorDelegate
+        Rectangle{
+            id: objCursorDelegateRect
+            width: objQbTerminal.cursorWidth
+            color: objQbTerminal.blink?"transparent":objQbTerminal.cursorColor
+        }
+    }
 
     function enableTerminal(){
         objQbTerminal.terminalEnabled = true;
@@ -227,10 +248,7 @@ Item{
                     height: objTerminalContents.cursorRectangle.height*objTerminalInputPassword.lineCount
                     readOnly: !objQbTerminal.terminalEnabled
                     visible: objQbTerminal.terminalEnabled && objTerminalInput.isPasswordMode
-                    cursorDelegate: Rectangle{
-                        width: objQbTerminal.cursorWidth
-                        color: objQbTerminal.cursorColor
-                    }
+                    cursorDelegate: objCursorDelegate
                     onContentHeightChanged: {
                         objQbTerminalFlickArea.contentHeight = objQbTerminalFlickArea.actualContentHeight+objTerminalInput.height+objQbTerminal.bottomExtraSpace;
                         if(objQbTerminalFlickArea.contentHeight>objQbTerminalFlickArea.height){
@@ -279,10 +297,7 @@ Item{
                     height: objTerminalContents.cursorRectangle.height*objTerminalInputText.lineCount
                     readOnly: !objQbTerminal.terminalEnabled
                     visible: objQbTerminal.terminalEnabled && !objTerminalInput.isPasswordMode
-                    cursorDelegate: Rectangle{
-                        width: objQbTerminal.cursorWidth
-                        color: objQbTerminal.cursorColor
-                    }
+                    cursorDelegate: objCursorDelegate
                     onContentHeightChanged: {
                         objQbTerminalFlickArea.contentHeight = objQbTerminalFlickArea.actualContentHeight+objTerminalInput.height+objQbTerminal.bottomExtraSpace;
                         if(objQbTerminalFlickArea.contentHeight>objQbTerminalFlickArea.height){
