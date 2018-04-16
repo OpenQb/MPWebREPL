@@ -19,6 +19,32 @@ QbApp{
         id: appTheme
     }
 
+    Connections{
+        target: Qt.inputMethod
+        onVisibleChanged:{
+            if(Qt.inputMethod.visible){
+                if(Qt.platform.os === "android"){
+                    var v = false;
+                    if(appUi.height>appUi.width){
+                        v = true;
+                    }
+                    if(v){
+                        objInvisibleBlock.height = QbCoreOne.scale(275);
+                    }
+                    else{
+                        objInvisibleBlock.height = QbCoreOne.scale(200);
+                    }
+                }
+                else if(Qt.platform.os === "ios"){
+                    objInvisibleBlock.height = Qt.inputMethod.keyboardRectangle.height();
+                }
+            }
+            else{
+                objInvisibleBlock.height = 1;
+            }
+        }
+    }
+
     Pane{
         id: appMainPage
         topPadding: QbCoreOne.scale(25)
@@ -33,7 +59,16 @@ QbApp{
         anchors.fill: parent
         WebREPL{
             id: objWebREPL
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: objInvisibleBlock.top
+        }
+        Item{
+            id: objInvisibleBlock
+            width: parent.width
+            height: 1
+            anchors.bottom: parent.bottom
         }
     }
 }
