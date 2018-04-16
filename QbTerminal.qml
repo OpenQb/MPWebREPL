@@ -36,7 +36,6 @@ Item{
 
     function setCursorToEnd(){
         objTerminalContents.cursorPosition = objTerminalContents.length;
-        objTerminalContents.cursorVisible = true;
     }
 
     function passwordMode(){
