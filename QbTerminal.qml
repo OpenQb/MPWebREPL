@@ -15,7 +15,7 @@ Item{
     property int fontSize: 15
     property int verticalScrollBarHeight: 18
 
-    property bool terminalEnabled: true
+    property bool terminalEnabled: false
 
     signal command(string cmd);
     signal upArrowPressed();
@@ -57,6 +57,7 @@ Item{
     }
 
     function properFocus(){
+        if(!objTerminal.terminalEnabled) return;
         if(!objTerminalInput.isPasswordMode){
             objTerminalInputText.cursorVisible = true;
             objTerminalInputText.focus = true;
