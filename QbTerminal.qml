@@ -53,6 +53,7 @@ Item{
     function setCommand(cmd){
         if(!objTerminalInput.isPasswordMode){
             objTerminalInputText.text = cmd;
+            objTerminalInputText.cursorPosition = objTerminalInputText.text.length;
         }
     }
 
@@ -188,7 +189,7 @@ Item{
             property int actualContentHeight:1
             id: objQbTerminalFlickArea
             clip: true
-            interactive: false
+            interactive: true
 
             anchors.top: parent.top
             anchors.bottom: parent.bottom

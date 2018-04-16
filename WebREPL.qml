@@ -14,7 +14,6 @@ Page{
     property alias ip: objAddress.text
     property bool isConnected: false
     property int mode: 0
-    //property string lastCommand:""
     property var history: []
     property int historyIndex: 0
     property string receivedBuffer:""
@@ -107,10 +106,31 @@ Page{
         verticalScrollBarColor: appTheme.lighter(appTheme.background)
 
         onUpArrowPressed: {
-            console.log("Up")
+            if(objWebREPLPage.history.length==0) return;
+            if(objWebREPLPage.historyIndex>0){
+                objWebREPLPage.historyIndex = objWebREPLPage.historyIndex - 1;
+                var cmd  = objWebREPLPage.history[objWebREPLPage.historyIndex];
+                objTerminal.setCommand(cmd);
+            }
         }
+        onWidthChanged: {
+            objTerminal.properFocus();
+        }
+        onHeightChanged: {
+            objTerminal.properFocus();
+        }
+
         onDownArrowPressed: {
-            console.log("Down")
+            if(objWebREPLPage.history.length==0) return;
+            if(objWebREPLPage.historyIndex<objWebREPLPage.history.length-1){
+                objWebREPLPage.historyIndex = objWebREPLPage.historyIndex + 1;
+                var cmd = objWebREPLPage.history[objWebREPLPage.historyIndex];
+                objTerminal.setCommand(cmd);
+            }
+            else{
+                objWebREPLPage.historyIndex = objWebREPLPage.history.length;
+                objTerminal.setCommand("");
+            }
         }
 
         onCommand: {
@@ -124,6 +144,20 @@ Page{
                 }
                 else{
                     objWebSocket.sendTextMessage(cmd+"\r");
+                }
+
+                if(!objTerminal.isPasswordMode()){
+                    if(objWebREPLPage.history.length>0){
+                        var lastCmd = objWebREPLPage.history[objWebREPLPage.history.length-1];
+                        if(lastCmd !== cmd){
+                            objWebREPLPage.history.push(cmd);
+                            objWebREPLPage.historyIndex = objWebREPLPage.history.length;
+                        }
+                    }
+                    else{
+                        objWebREPLPage.history.push(cmd);
+                        objWebREPLPage.historyIndex = 1;
+                    }
                 }
             }
             else{
