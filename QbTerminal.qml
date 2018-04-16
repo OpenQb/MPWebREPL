@@ -18,6 +18,8 @@ Item{
     property bool terminalEnabled: true
 
     signal command(string cmd);
+    signal upArrowPressed();
+    signal downArrowPressed();
 
     id: objQbTerminal
     width: 500
@@ -47,6 +49,12 @@ Item{
 
     function isPasswordMode(){
         return objTerminalInput.isPasswordMode;
+    }
+
+    function setCommand(cmd){
+        if(!objTerminalInput.isPasswordMode){
+            objTerminalInputText.text = cmd;
+        }
     }
 
     function properFocus(){
