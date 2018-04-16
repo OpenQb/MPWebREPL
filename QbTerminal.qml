@@ -47,6 +47,10 @@ Item{
         objTerminalInput.isPasswordMode = false;
     }
 
+    function isPasswordMode(){
+        return objTerminalInput.isPasswordMode;
+    }
+
     function properFocus(){
         if(!objTerminalInput.isPasswordMode){
             objTerminalInputText.cursorVisible = true;
@@ -76,6 +80,13 @@ Item{
 
     function disableTerminal(){
         objQbTerminal.terminalEnabled = false;
+    }
+
+    function refreshInputMethod(){
+        if(Qt.inputMethod.visible){
+            Qt.inputMethod.hide();
+            Qt.inputMethod.show();
+        }
     }
 
     function insertText(text){

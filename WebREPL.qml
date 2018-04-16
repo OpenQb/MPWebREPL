@@ -108,10 +108,11 @@ Page{
 
         onCommand: {
             if(cmd.length>0){
-                if(cmd.indexOf("::") === 0){
+                if(cmd.indexOf("::") === 0 && !objTerminalFlickArea.isPasswordMode()){
                     if(cmd === "::clear"){
                         objTerminalFlickArea.clearTerminal();
                         objTerminalFlickArea.insertText("Welcome To Micropython\n>>> ");
+                        objTerminalFlickArea.refreshInputMethod();
                     }
                 }
                 else{
