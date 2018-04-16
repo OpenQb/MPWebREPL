@@ -79,7 +79,7 @@ Page{
                 objWebSocket.active = true;
                 objTerminal.enableTerminal();
                 objTerminal.clearTerminal();
-                objTerminal.insertText("Welcome To Micropython\n");
+                objTerminal.insertText("Welcome To MicroPython\n");
             }
         }
     }
@@ -138,7 +138,7 @@ Page{
                 if(cmd.indexOf("::") === 0 && !objTerminal.isPasswordMode()){
                     if(cmd === "::clear"){
                         objTerminal.clearTerminal();
-                        objTerminal.insertText("Welcome To Micropython\n>>> ");
+                        objTerminal.insertText("Welcome To MicroPython\n>>> ");
                         objTerminal.refreshInputMethod();
                     }
                 }
