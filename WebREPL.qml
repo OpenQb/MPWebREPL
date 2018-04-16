@@ -25,31 +25,31 @@ Page{
 
 
     function resetSystem(){
-        objTerminalFlickArea.clearTerminal();
+        objTerminal.clearTerminal();
     }
 
     WebSocket{
         id: objWebSocket
         onTextMessageReceived: {
             if(message.indexOf("Password:") === 0){
-                objTerminalFlickArea.passwordMode();
-                objTerminalFlickArea.insertText("Enter Password\n>>> ");
+                objTerminal.passwordMode();
+                objTerminal.insertText("Enter Password\n>>> ");
             }
             else if(message.indexOf("Access denied") >= 0){
-                objTerminalFlickArea.textMode();
-                objTerminalFlickArea.insertText("Access denied.\n>>> ");
+                objTerminal.textMode();
+                objTerminal.insertText("Access denied.\n>>> ");
                 objWebSocket.active = false;
                 objConnectButton.forceActiveFocus();
                 objWebREPLPage.isConnected = false;
             }
             else if(message.indexOf("WebREPL connected")>=0){
-                objTerminalFlickArea.textMode();
-                objTerminalFlickArea.insertText("WebREPL connected.\n>>> ");
+                objTerminal.textMode();
+                objTerminal.insertText("WebREPL connected.\n>>> ");
                 objWebREPLPage.isConnected = true;
             }
             else{
-                objTerminalFlickArea.textMode();
-                objTerminalFlickArea.insertText(message)
+                objTerminal.textMode();
+                objTerminal.insertText(message)
             }
         }
     }
@@ -73,20 +73,20 @@ Page{
             if(objWebSocket.active){
                 objWebSocket.active = false;
                 objWebREPLPage.isConnected = false;
-                objTerminalFlickArea.disableTerminal();
+                objTerminal.disableTerminal();
             }
             else{
                 objWebSocket.url = objWebREPLPage.ip;
                 objWebSocket.active = true;
-                objTerminalFlickArea.enableTerminal();
-                objTerminalFlickArea.clearTerminal();
-                objTerminalFlickArea.insertText("Welcome To Micropython\n");
+                objTerminal.enableTerminal();
+                objTerminal.clearTerminal();
+                objTerminal.insertText("Welcome To Micropython\n");
             }
         }
     }
 
     QbTerminal {
-        id: objTerminalFlickArea
+        id: objTerminal
         clip: true
         anchors.left: parent.left
         anchors.right: parent.right
@@ -115,11 +115,11 @@ Page{
 
         onCommand: {
             if(cmd.length>0){
-                if(cmd.indexOf("::") === 0 && !objTerminalFlickArea.isPasswordMode()){
+                if(cmd.indexOf("::") === 0 && !objTerminal.isPasswordMode()){
                     if(cmd === "::clear"){
-                        objTerminalFlickArea.clearTerminal();
-                        objTerminalFlickArea.insertText("Welcome To Micropython\n>>> ");
-                        objTerminalFlickArea.refreshInputMethod();
+                        objTerminal.clearTerminal();
+                        objTerminal.insertText("Welcome To Micropython\n>>> ");
+                        objTerminal.refreshInputMethod();
                     }
                 }
                 else{
