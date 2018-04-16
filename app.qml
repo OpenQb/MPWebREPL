@@ -19,8 +19,12 @@ QbApp{
         id: appTheme
     }
 
-    Page{
+    Pane{
         id: appMainPage
+        topPadding: QbCoreOne.scale(25)
+        bottomPadding: 0
+        leftPadding: 0
+        rightPadding: 0
         Material.background: appTheme.background
         Material.foreground: appTheme.foreground
         Material.accent: appTheme.accent

@@ -23,83 +23,33 @@ Page{
     anchors.topMargin: QbCoreOne.scale(10)
     anchors.bottomMargin: QbCoreOne.scale(10)
 
-    Component.onCompleted: {
-        disableMessageSenderBox();
-    }
-
-    function enableMessageSenderBox(){
-        objMessageSenderBox.echoMode = TextField.Normal
-        objMessageSenderBox.enabled = true;
-        objMessageSenderBox.text ="";
-        //objMessageSenderButton.enabled = true;
-        objMessageSenderBox.forceActiveFocus();
-    }
-
-    function disableMessageSenderBox(){
-        objMessageSenderBox.text = "";
-        objMessageSenderBox.enabled = false;
-        //objMessageSenderButton.enabled = false;
-    }
 
     function resetSystem(){
-        objWebREPLPage.receivedBuffer = "";
-    }
-
-    function addMessage(msg){
-        objTerminal.insert(objTerminal.length,msg);
-        //objTerminal.append(msg)
-        //objTerminalFlickArea.flick(0,objTerminal.contentHeight);
+        objTerminalFlickArea.clearTerminal();
     }
 
     WebSocket{
         id: objWebSocket
-
-//        onBinaryMessageReceived: {
-//            console.log("Binary message");
-//        }
         onTextMessageReceived: {
             if(message.indexOf("Password:") === 0){
-                addMessage("Welcome to MicroPython.\n");
-                addMessage("Enter Password:\n");
-                enableMessageSenderBox();
-                objMessageSenderBox.echoMode = TextField.Password;
+                objTerminalFlickArea.passwordMode();
+                objTerminalFlickArea.insertText("Enter Password\n>>> ");
             }
             else if(message.indexOf("Access denied") >= 0){
-                addMessage("Access denied.\n");
+                objTerminalFlickArea.textMode();
+                objTerminalFlickArea.insertText("Access denied.\n>>> ");
                 objWebSocket.active = false;
                 objConnectButton.forceActiveFocus();
-                disableMessageSenderBox();
                 objWebREPLPage.isConnected = false;
             }
             else if(message.indexOf("WebREPL connected")>=0){
-                addMessage("WebREPL connected.\n");
-                enableMessageSenderBox();
+                objTerminalFlickArea.textMode();
+                objTerminalFlickArea.insertText("WebREPL connected.\n>>> ");
                 objWebREPLPage.isConnected = true;
             }
             else{
-                //console.log(message)
-                switch (objWebREPLPage.mode){
-                case 0:
-                    if(message.indexOf(">>>") === 0){
-                        addMessage(">>> "+objWebREPLPage.receivedBuffer.slice(0,objWebREPLPage.receivedBuffer.length));
-                        objWebREPLPage.receivedBuffer = "";
-                        enableMessageSenderBox();
-                    }
-                    else if(message.indexOf("...") == 0){
-                        addMessage(">>> "+objWebREPLPage.receivedBuffer.slice(0,objWebREPLPage.receivedBuffer.length));
-                        objWebREPLPage.receivedBuffer = "";
-                        enableMessageSenderBox();
-                    }
-                    else{
-                        objWebREPLPage.receivedBuffer = objWebREPLPage.receivedBuffer+message
-                    }
-                    break;
-                case 21:
-                    console.log(message);
-                    break;
-                default:
-                    break
-                }
+                objTerminalFlickArea.textMode();
+                objTerminalFlickArea.insertText(message)
             }
         }
     }
@@ -122,95 +72,54 @@ Page{
         onClicked: {
             if(objWebSocket.active){
                 objWebSocket.active = false;
-                resetSystem();
-                disableMessageSenderBox();
                 objWebREPLPage.isConnected = false;
+                objTerminalFlickArea.disableTerminal();
             }
             else{
                 objWebSocket.url = objWebREPLPage.ip;
                 objWebSocket.active = true;
+                objTerminalFlickArea.enableTerminal();
+                objTerminalFlickArea.clearTerminal();
+                objTerminalFlickArea.insertText("Welcome To Micropython\n");
             }
         }
     }
 
-    Flickable {
+    QbTerminal {
         id: objTerminalFlickArea
         clip: true
-        width: parent.width
-        height: parent.height - objAddress.height - bottomBar.height
-        contentWidth: width
-        contentHeight: objTerminal.contentHeight
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: objAddress.bottom
-        contentY:  objTerminalFlickArea.contentHeight<objTerminalFlickArea.height?0:objTerminalFlickArea.contentHeight - objTerminalFlickArea.height
-        TextEdit{
-            id: objTerminal
-            width: parent.width
-            height: parent.height
-            color: appTheme.foreground
-            wrapMode: TextEdit.Wrap
-            inputMethodHints: Qt.ImhNoPredictiveText
-            //readOnly: true
-            textFormat: TextEdit.PlainText
-        }
-    }
+        anchors.bottom: parent.bottom
+        textColor: appTheme.foreground
+        bgColor: appTheme.background
+        cursorColor: appTheme.accent
+        cursorWidth: QbCoreOne.scale(5)
+        leftMargin: 0
+        rightMargin: 0
+        topMargin: 0
+        bottomMargin: 0
+        bottomExtraSpace: 0
+        fontFamily: "vrinda"
+        fontSize: 15
+        verticalScrollBarHeight: Qt.platform.os === "android"?QbCoreOne.scale(20):QbCoreOne.scale(7)
+        verticalScrollBarColor: appTheme.lighter(appTheme.background)
 
-    Row{
-        id: bottomBar
-        anchors.top: objTerminalFlickArea.bottom
-        width: parent.width
-        height: QbCoreOne.scale(50)
-        TextField{
-            id: objMessageSenderBox
-            width: parent.width
-            wrapMode: TextEdit.Wrap
-            inputMethodHints: Qt.ImhNoPredictiveText
-            Keys.onUpPressed: {
-                //console.log("Up")
-                if(objWebREPLPage.history.length==0) return;
-                objMessageSenderBox.text = objWebREPLPage.history[objWebREPLPage.historyIndex];
-                if(objWebREPLPage.historyIndex>0){
-                    objWebREPLPage.historyIndex = objWebREPLPage.historyIndex - 1;
-                }
-            }
-            Keys.onDownPressed: {
-                //console.log("Down")
-                if(objWebREPLPage.history.length==0) return;
-                //console.log(objWebREPLPage.historyIndex);
-                if(objWebREPLPage.historyIndex<objWebREPLPage.history.length-1){
-                    objWebREPLPage.historyIndex = objWebREPLPage.historyIndex + 1;
-                }
-                objMessageSenderBox.text = objWebREPLPage.history[objWebREPLPage.historyIndex];
-            }
-
-            Keys.onReturnPressed: {
-                var text = objMessageSenderBox.text;
-                if(objWebREPLPage.isConnected){
-                    //password phase is complete
-                    if(text === "clear"){
-                        objTerminal.clear();
-                    }
-                    else{
-                        objWebREPLPage.mode = 0;
-                        if(objWebREPLPage.history.length === 0){
-                            objWebREPLPage.history.push(text);
-                            objWebREPLPage.historyIndex = objWebREPLPage.history.length-1;
-                        }
-                        else{
-                            var lastOne = objWebREPLPage.history[objWebREPLPage.history.length-1];
-                            if(lastOne !== text){
-                                objWebREPLPage.history.push(text);
-                                objWebREPLPage.historyIndex = objWebREPLPage.history.length-1;
-                            }
-                        }
-                        objWebSocket.sendTextMessage(text+"\r");
-                        disableMessageSenderBox();
+        onCommand: {
+            if(cmd.length>0){
+                if(cmd.indexOf("::") === 0){
+                    if(cmd === "::clear"){
+                        objTerminalFlickArea.clearTerminal();
+                        objTerminalFlickArea.insertText("Welcome To Micropython\n>>> ");
                     }
                 }
                 else{
-                    objWebSocket.sendTextMessage(text+"\r");
-                    disableMessageSenderBox();
+                    objWebSocket.sendTextMessage(cmd+"\r");
                 }
-                objMessageSenderBox.text = "";
+            }
+            else{
+                objWebSocket.sendTextMessage(cmd+"\r");
             }
         }
     }
