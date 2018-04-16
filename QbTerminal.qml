@@ -289,6 +289,13 @@ Item{
                         }
                     }
 
+                    Keys.onUpPressed: {
+                        objQbTerminal.upArrowPressed();
+                    }
+                    Keys.onDownPressed: {
+                        objQbTerminal.downArrowPressed();
+                    }
+
                     onLengthChanged: {
                         if(objTerminalInputText.text!==objTerminalInputText.oldText){
                             objTerminalInputText.oldText = objTerminalInputText.text;

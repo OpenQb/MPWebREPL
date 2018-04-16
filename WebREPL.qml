@@ -106,6 +106,13 @@ Page{
         verticalScrollBarHeight: Qt.platform.os === "android"?QbCoreOne.scale(20):QbCoreOne.scale(7)
         verticalScrollBarColor: appTheme.lighter(appTheme.background)
 
+        onUpArrowPressed: {
+            console.log("Up")
+        }
+        onDownArrowPressed: {
+            console.log("Down")
+        }
+
         onCommand: {
             if(cmd.length>0){
                 if(cmd.indexOf("::") === 0 && !objTerminalFlickArea.isPasswordMode()){
