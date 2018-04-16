@@ -1,4 +1,3 @@
-import Qb.Core 1.0
 import QtQuick 2.10
 
 Item{
@@ -28,7 +27,6 @@ Item{
     Keys.forwardTo: [objTerminalInput]
 
     onActiveFocusChanged: {
-        console.log("Focus changed");
         if(activeFocus){
             properFocus();
         }
