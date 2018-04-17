@@ -210,7 +210,7 @@ Item{
             property int actualContentHeight:1
             id: objQbTerminalFlickArea
             clip: true
-            interactive: true
+            interactive: false
 
             anchors.top: parent.top
             anchors.bottom: parent.bottom
